@@ -1,13 +1,16 @@
 from conta import Contas
 
-contaBradesco = Contas("Ana", "1234-5", False)
-print(contaBradesco.titular)
-print(contaBradesco.saldo)
-print(contaBradesco.depositar(20))
-print(contaBradesco.extrato())
-if print(contaBradesco.sacar(32)):
-    print(contaBradesco.saldo)
-else:
-    print('Saldo insuficiente')
-    
-print(contaBradesco.extrato())
+nome = input('Digite o nome do Titular: ')
+conta = input ('Digite a conta: ')
+contaBradesco = Contas(nome, conta)
+
+while(True):
+    mov = input('1- Sacar ou 2-Depositar')
+    valor = float(input('Informe o valor: '))
+    if mov == '1':
+        if( contaBradesco.sacar(valor)== False):
+            print('Saldo insuficiente')
+    else:
+        contaBradesco.depositar(valor)
+    print(contaBradesco.extrato(valor))
+
