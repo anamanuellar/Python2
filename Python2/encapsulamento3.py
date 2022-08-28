@@ -12,7 +12,7 @@ class NotaFiscal:
             self._codigo = texto
         else: 
             print('NF invalida')
-        
+#Programa        
 TalaoNF = NotaFiscal()
 print(TalaoNF.codigo)
 TalaoNF.codigo = 'NF12345'
