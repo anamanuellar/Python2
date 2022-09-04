@@ -1,6 +1,4 @@
 #Associacao entre classes:
-from xmlrpc.client import boolean
-
 
 class Salarios:
     def __init__(self, qtHoras, valorHora, adicional=0):

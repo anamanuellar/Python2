@@ -1,1 +1,0 @@
-print ('Vinicius'[0])
