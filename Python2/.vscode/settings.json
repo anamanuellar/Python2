@@ -7,11 +7,25 @@
         "mtodo"
     ],
     "cSpell.ignoreWords": [
+        "Associacao",
+        "Classe",
         "Demissao",
+        "Funcionarios",
         "Nasc",
+        "Ruas",
+        "Salario",
+        "Salarios",
         "Talao",
         "Vinicius",
+        "adicional",
+        "calcular",
         "codigo",
-        "descricao"
-    ]
+        "descricao",
+        "endereco",
+        "endereço",
+        "nome",
+        "salario",
+        "vendedor"
+    ],
+    "cSpell.enabled": false
 }
