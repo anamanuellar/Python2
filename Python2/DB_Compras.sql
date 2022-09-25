@@ -39,3 +39,34 @@ create table if not exists Itens (
         references Produtos (codigo)
 		on delete cascade on update cascade
 );
+-- Alterando a tabela Pedidos (Adicionando um campo)
+alter table Pedidos
+	add data_entrega date null;
+
+-- Alterando a tabela Pedidos 
+alter table Pedidos
+	drop column total;
+    
+-- Alterando a tabela Produtos (Renomeando um campo)
+-- Renomeando com 'change' e obrigatorio informar a definicao
+alter table Produtos
+	change column nome nomes varchar(200);
+
+-- Alterando a tabela Produtos (Modificando a definicao de um campo)
+alter table Produtos
+	modify column nomes char (200) default 'SEM NOME';
+
+-- Inserindo dados no Banco:
+insert into Produtos (nomes, ano_fab, preco) values
+	('Furadeira', 2020, 360.00),
+    ('Chave de Fenda Longa N.5',20201, 29.50),
+    ('Lixadeira Orbital Eletrca', 2022, 480.00);
+    
+-- inserindo um registro usando o campo 'nome' como 'default'
+insert into Produtos (ano_fab, preco) value (2022, 0.0);
+insert into Pedidos (pedido, cod_cliente, data_pedido) values (1, 1, '2022-09-15');
+insert into Itens (cod_pedido, cod_produto, quantidade) values
+	(1, 1, 1),
+    (1, 2, 5),
+    (1, 3, 2);
+
