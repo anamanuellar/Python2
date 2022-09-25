@@ -1,3 +1,4 @@
+-- DDL: Criando banco de dados
 create database if not exists Ferramentas;
 use Ferramentas;
 create table if not exists Produtos (
@@ -39,6 +40,7 @@ create table if not exists Itens (
         references Produtos (codigo)
 		on delete cascade on update cascade
 );
+-- DML: Manipulando dados
 -- Alterando a tabela Pedidos (Adicionando um campo)
 alter table Pedidos
 	add data_entrega date null;
@@ -69,4 +71,33 @@ insert into Itens (cod_pedido, cod_produto, quantidade) values
 	(1, 1, 1),
     (1, 2, 5),
     (1, 3, 2);
+    
+-- Excluindo Registros utilizando 'and' quando houver duas chaves primarias
+delete from Itens where cod_pedido=1 and cod_produto=3;
 
+-- Atualizando o campo 'quantidade' em 'Itens'
+update Itens
+	set quantidade = 10
+    where cod_pedido= 1 and cod_produto=2;
+    
+-- Gerando consultas como relatorios (querys)
+select nomes, preco from Produtos;
+
+-- consulta com condicao:
+select * from produtos where (Produtos.preco < 400);
+
+-- consulta com mais que uma tabela:
+select Produtos.nomes, Produtos.preco, Itens.Quantidade, Pedidos.data_pedido
+	from Produtos, Itens, Pedidos
+    where Produtos.codigo=Itens.cod_produto and Pedidos.pedido = Itens.cod_pedido
+    order by Produtos.nomes asc;
+
+-- commit: quando uma transaction e executada por completo (se o teste der certo, o default e commit para gravar)
+-- roolback: quando a transaction falha, todas as açoes sao desfeitas (similar o desfazer)
+start transaction;
+	delete from Produtos where codigo=3;
+    insert into Produtos (nomes, ano_fab, preco) values
+		('Arco de Serra', 2018, 17.60);
+	select * from Produtos;
+    rollback;
+    select * from Produtos;
