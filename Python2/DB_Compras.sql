@@ -20,7 +20,10 @@ create table if not exists Pedidos (
     situacao set('C', 'P', 'E', 'R') not null default 'E',
     data_pedido date not null,            
     -- data
-    total decimal (10,2) null
+    total decimal (10,2) null,
+	foreign key (cod_cliente)
+		references Clientes (matricula)
+    on delete cascade on update cascade
     );
 create table if not exists Itens (
 	cod_pedido int unsigned not null,
@@ -40,6 +43,18 @@ create table if not exists Itens (
         references Produtos (codigo)
 		on delete cascade on update cascade
 );
+create table if not exists Clientes (
+    matricula int unsigned primary key,
+    nome_cliente varchar (30) not null,
+    sobrenome_cliente varchar (40) null,
+    dt_nasc date,
+    status_cliente CHAR (2),
+    );
+    
+
+
+
+
 -- DML: Manipulando dados
 -- Alterando a tabela Pedidos (Adicionando um campo)
 alter table Pedidos
