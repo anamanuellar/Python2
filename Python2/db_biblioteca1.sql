@@ -201,3 +201,17 @@ INSERT INTO tbl_autores (ID_Autor, Nome_autor)
 VALUES (16, 'Joana');
 SELECT * FROM tbl_autores;
 
+/*criar uma view de nome vw_LivrosAutores que retorne ao ser consultada os nomes dos livros e seus respectivos autores*/
+CREATE VIEW vw_LivrosAutores
+AS SELECT tbl_Livro.Nome_Livro AS Livro, tbl_autores.Nome_Autor AS Autor
+FROM tbl_Livro
+INNER JOIN tbl_autores
+ON tbl_Livro.ID_Autor = tbl_autores.ID_Autor;
+
+/*alterar a view vw_LivrosAutores para incluir também os preços dos livros*/
+ALTER  VIEW vw_LivrosAutores AS
+SELECT tbl_Livro.Nome_Livro AS Livro, tbl_autores.Nome_Autor AS Autor, Preco_Livro AS Valor
+FROM tbl_Livro
+INNER JOIN tbl_autores
+ON tbl_Livro.ID_Autor = tbl_autores.ID_Autor;
+
