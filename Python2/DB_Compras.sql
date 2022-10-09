@@ -13,7 +13,7 @@ create table if not exists Produtos (
     preco decimal (10,2) not null
     );
 create table if not exists Pedidos (
-	pedido int unsigned primary key,
+	pedido int unsigned,
     cod_cliente int unsigned,
     -- Situaçao: C = Completo, P = Pendente Pagto, E = Em processamento
     -- R = Rejeitado Pagamento
@@ -48,7 +48,7 @@ create table if not exists Clientes (
     nome_cliente varchar (30) not null,
     sobrenome_cliente varchar (40) null,
     dt_nasc date,
-    status_cliente CHAR (2),
+    status_cliente CHAR (2)
     );
     
 

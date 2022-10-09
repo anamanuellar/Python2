@@ -1,0 +1,164 @@
+-----  ****
+-- Nossa DDL (Data Definition Language)
+-- ****
+-- SGBD (Sistema de Gerenciamento de Banco de Dados)
+CREATE DATABASE IF NOT EXISTS Ferramentaria ;
+
+-- Coloca este Banco de dados como o Atual em uso.
+USE Ferramentaria;		
+
+CREATE TABLE IF NOT EXISTS Produtos (
+	-- Bytes: 4	Range: -2.147.483.647 á 2.147.483.647 
+    -- https://dev.mysql.com/doc/refman/8.0/en/storage-requirements.html
+         #data-types-storage-reqs-numeric
+    codigo INT PRIMARY KEY AUTO_INCREMENT,	
+	nome VARCHAR (255) NOT NULL,
+	-- Bytes: 2	Range: -32.767 á 32.767
+    ano_fab SMALLINT, 
+	-- De: -99.999.999,99 á 99.999.999,99
+    preco DECIMAL (10,2) NOT NULL	
+);
+CREATE TABLE IF NOT EXISTS Pedidos (
+	-- Bytes: 4	Range: 0 á 4.294.967.295
+    pedido INT UNSIGNED,  
+	-- Bytes: 2	Range: -32.767 á 32.767
+    cod_cliente INT UNSIGNED,
+    PRIMARY KEY (pedido, cod_cliente),
+    -- Situação: C = Completo, P = Pendente Pagamento; E = Em Processamento,
+    -- R = Rejeitado Pagamento
+	situacao SET('C','P','E','R') DEFAULT 'E',
+	data_pedido DATE NOT NULL,		-- Data
+    total DECIMAL (10,2) NULL,
+    FOREIGN KEY (cod_cliente)
+        REFERENCES Clientes (matricula) 
+);
+CREATE TABLE IF NOT EXISTS Itens(
+    cod_pedido INT UNSIGNED NOT NULL,
+	cod_produto INT NOT NULL,
+    --   -99,999 á 99,999
+    quantidade DECIMAL (5,3) NOT NULL,
+	desconto DECIMAL (4,2) DEFAULT 0,		-- Default (Valor Padrão)
+	PRIMARY KEY (cod_pedido, cod_produto),		-- Chave Primária Composta
+	FOREIGN KEY (cod_pedido) 	-- Chave Estrangeira (para o relacionamento entre tabelas)
+        REFERENCES Pedidos (pedido) 
+        -- Ao excluir ou atualizar as tabelas principais, a exclusão ou
+        -- atualização irá se propagar para esta tabela.
+        ON DELETE CASCADE  ON UPDATE CASCADE,
+	FOREIGN KEY (cod_produto) 
+        REFERENCES Produtos (codigo) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- Alterando a tabela Pedidos (Adicionando um campo)
+ALTER TABLE Pedidos
+	ADD data_entrega DATE NULL;
+
+-- Alterando a tabela Pedidos (Excluíndo um campo)
+ALTER TABLE Pedidos
+	DROP COLUMN total;
+
+-- Alterando a tabela Produtos (Renomeando um campo)
+-- Renomenando com 'CHANGE' é obrigatório informar a definição:
+ALTER TABLE Produtos
+CHANGE COLUMN nome nomes VARCHAR(200) ;
+
+-- Alterando a tabela Produtos (Modificando a definição de um campo)
+ALTER TABLE Produtos
+MODIFY COLUMN nomes CHAR (199) DEFAULT 'SEM_NOME';
+
+-- O comando abaixo só esta disponível a partir do MariaDB 10.5.2 ou MySQL 8.01
+SELECT VERSION();
+-- RENAME COLUMN nomess TO nomesss;
+
+--- ****
+-- DML: Data Manipulation Language (Insert, Update, Delete)
+--- ****
+-- Inserindo dados no Banco:
+INSERT INTO Produtos (nomes, ano_fab, preco) VALUES 
+	('Furadeira', 2020, 360.949) ,
+    ('Chave de Fenda Longa N.5', 2021, 29.50) ,
+    ('Lixadeira Orbital Elétrica', 2022, 480.00) ;
+
+-- Inserindo um registro usando o campo 'nome' como 'default'
+INSERT INTO Produtos (ano_fab, preco) VALUES (2022, 0.0);
+
+INSERT INTO Pedidos (pedido, cod_cliente, data_pedido) VALUES 
+	(1, 1, '2022-09-15') ;
+
+INSERT INTO Itens (cod_pedido, cod_produto, quantidade) VALUES
+	(1, 1, 1) ,
+    (1, 2, 5) ,
+    (1, 3, 2) ;
+
+-- Excluíndo Registros:
+DELETE FROM Itens WHERE cod_pedido=1 AND cod_produto = 3;
+
+-- Atualizando o campo 'quantidade' em 'Itens':
+UPDATE Itens 
+	SET quantidade = 10
+    WHERE cod_pedido=1 AND cod_produto=2;
+
+-- Gerando Consultas como relatórios (Querys)
+-- Consulta Simples:
+SELECT * FROM Produtos;
+
+-- Consulta com Condição:
+SELECT * FROM Produtos WHERE (Produtos.preco < 400) ;
+
+-- Consulta com mais que uma tabela:
+SELECT Produtos.nomes, Produtos.preco, Itens.Quantidade
+  FROM Produtos, Itens, Pedidos
+  WHERE Produtos.codigo=Itens.cod_produto
+  ORDER BY Produtos.nomes DESC;
+/*
+	Exercício:
+    1) Na consulta acima, o que seria necessário alterar para
+		incluir na consulta impressa o campo 'Pedidos.data_pedido'?
+    2) Insira mais um 'Pedido' e regere a consulta agrupando por 
+		'pedido'.
+	3) Vamos criar um 'campo calculado' chamado 'SubTotal' que é o
+		resultado do produto entre quantidade e preco.
+/*
+
+	commit: Quando uma transaction é executada por completo.
+	roolback: Quando a transaction falha, todas as ações são desfeitas.
+*/
+START TRANSACTION;
+	DELETE FROM Produtos WHERE codigo=3;
+    INSERT INTO Produtos (nomes, ano_fab, preco) VALUES 
+          ('Arco de Serra', 2018, 17.60) ;
+	SELECT * FROM Produtos;
+    ROLLBACK;
+	SELECT * FROM Produtos;
+  
+/*
+	Exercício:
+    1) Modelar uma tabela do banco de dados "Clientes", deve 
+       conter um campo chave 'matricula' e outros campos a sua 
+       escolha. 
+    2) Verificar qual o tipo de ER (Entidade-Relacionamento) há
+	   entre a tabela 'Clientes' e a tabela 'Pedidos' e criar a
+       respectiva 'chave estrangeira' (FOREIGN KEY).  
+    3) Crie e Verifique o Diagrama ER entre todas as tabelas.
+    4) Adicione 2 linhas de dados na tabela 'Clientes'.
+    5) Gere uma consulta relacionando a tabela clientes com 
+		'Pedidos', 'Itens' e 'Produtos'.
+*/
+
+/*
+CREATE TABLE Clientes (
+	matricula INT UNSIGNED PRIMARY KEY,
+    nome VARCHAR (30) NOT NULL,
+    sobrenome VARCHAR (40) NULL,
+    dt_nasc DATE,
+    situacao CHAR (2)
+);
+
+INSERT INTO Clientes (matricula, nome, sobrenome, dt_nasc, situacao) 
+	VALUES 
+    (1, 'Vinicius', 'Costa', '1980-12-30', '01'),
+    (2, 'Ana', 'Silva', '1990-01-01', '02');
+*/
+
+
+ 
