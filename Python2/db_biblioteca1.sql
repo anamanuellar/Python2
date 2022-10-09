@@ -214,4 +214,8 @@ SELECT tbl_Livro.Nome_Livro AS Livro, tbl_autores.Nome_Autor AS Autor, Preco_Liv
 FROM tbl_Livro
 INNER JOIN tbl_autores
 ON tbl_Livro.ID_Autor = tbl_autores.ID_Autor;
+/*INNER JOIN (ou simplesmente JOIN) permite obter registros com dados provenientes de duas ou mais tabelas relacionadas do banco de dados no MySQL*/
+SELECT * FROM tbl_Livro
+INNER JOIN tbl_autores
+ON tbl_Livro.ID_Autor = tbl_autores.ID_Autor; 
 
